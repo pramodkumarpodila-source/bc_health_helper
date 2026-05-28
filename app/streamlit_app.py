@@ -754,7 +754,7 @@ elif page == "⏱️ Wait Time Predictor":
             (df_wait['HEALTH_AUTHORITY'] == 'All Health Authorities') &
             (df_wait['PROCEDURE_GROUP'] == 'All Procedures')
         ].dropna(subset=['DATE','PERCENTILE_COMP_50TH']).sort_values('DATE')
-        df_bc_recent = df_bc[df_bc['DATE'] >= '2022-01-01']
+        df_bc_recent = df_bc[df_bc['DATE'] >= '2018-01-01']
 
         latest_forecast = forecast.tail(4)['yhat'].mean()
         current = df_bc_recent['PERCENTILE_COMP_50TH'].iloc[-1]
@@ -766,7 +766,7 @@ elif page == "⏱️ Wait Time Predictor":
 
         fig3 = go.Figure()
         fig3.add_trace(go.Scatter(x=df_bc_recent['DATE'], y=df_bc_recent['PERCENTILE_COMP_50TH'],
-                                  name='Actual wait time', line=dict(color='#146EB4',width=2)))
+                          name='Actual wait time', line=dict(color='#00BFFF',width=3)))
         fig3.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'],
                                   name='AI Forecast', line=dict(color='#FF9900',width=2,dash='dash')))
         fig3.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat_upper'],
