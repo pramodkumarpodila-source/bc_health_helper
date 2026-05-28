@@ -492,8 +492,9 @@ if page == "🏠 Home":
     c2.metric("Average wait time","32.2 weeks","GP to treatment")
     c3.metric("Without family doctor","900,000","BC residents")
     c4.metric("Wait times vs 1993","+208%","longer today")
+    st.caption("📌 Statistics source: Doctors of BC (2025) and Fraser Institute (2025). Updated annually — not live data. Surgical wait times data updated quarterly by BC Government.")
     st.markdown("---")
-    st.caption("Built by Sai Pramod Podila | DS 302 Capstone | Cornerstone College | 2026")
+    st.caption("Built by Sai Pramod Podila | Cornerstone College | 2026")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SYMPTOM HELPER
@@ -645,6 +646,18 @@ elif page == "⏱️ Wait Time Predictor":
 
         # ── Section 1: How long will I wait ──────────────────────────────────
         st.markdown("### 🔍 How long will I wait for my procedure?")
+        st.info("""
+            📊 **BC Specialist Wait Times**
+
+            BC does not publicly report specialist wait times by specialty.
+
+            According to the Fraser Institute 2025 report, BC patients wait:
+            - **15.3 weeks** — GP referral to specialist consultation
+            - **12.4 weeks** — specialist consultation to treatment  
+            - **32.2 weeks total** — GP referral to treatment
+
+            *Source: Moir & Barua (2025). Waiting Your Turn: Wait Times for Health Care in Canada. Fraser Institute.*
+            """)
         st.write("Select your procedure to see current BC wait times.")
 
         procedures = sorted(df_proc['PROCEDURE_GROUP'].unique().tolist())
@@ -664,7 +677,7 @@ elif page == "⏱️ Wait Time Predictor":
                           labels={'PERCENTILE_COMP_50TH':'Weeks waiting','DATE':'Year'})
             fig.update_traces(line_color='#146EB4', line_width=2)
             fig.update_layout(height=300)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
 
         st.markdown("---")
 
@@ -723,7 +736,7 @@ elif page == "⏱️ Wait Time Predictor":
                               color='PERCENTILE_COMP_50TH',
                               color_continuous_scale=['#27AE60','#E74C3C'])
                 fig2.update_layout(height=350, showlegend=False)
-                st.plotly_chart(fig2, use_container_width=True)
+                st.plotly_chart(fig2, width="stretch")
 
                 fastest = latest_by_region.iloc[0]
                 st.info(f"💡 **{fastest['HEALTH_AUTHORITY']}** currently has the shortest wait for {selected_proc} at **{fastest['PERCENTILE_COMP_50TH']:.0f} weeks**. Ask your GP if a cross-region referral is possible.")
@@ -763,7 +776,7 @@ elif page == "⏱️ Wait Time Predictor":
                                   name='Possible range'))
         fig3.update_layout(xaxis_title='Year', yaxis_title='Weeks waiting', height=320,
                            legend=dict(orientation='h', y=-0.3))
-        st.plotly_chart(fig3, use_container_width=True)
+        st.plotly_chart(fig3, width="stretch")
         st.caption("📌 Forecast uses Prophet ML model trained on BC government data 2009–2025. COVID spike (2020) visible in historical data.")
 
     except Exception as e:
@@ -955,7 +968,7 @@ elif page == "📊 About & Methods":
     st.markdown("---")
     st.markdown("""
     ### What is BC Health Helper?
-    An AI-powered healthcare navigation tool for BC patients. Built for DS 302 Capstone at Cornerstone College.
+    An AI-powered healthcare navigation tool for BC patients.
     Does NOT diagnose — helps patients navigate to the right level of care.
 
     ### Components & Performance
@@ -989,7 +1002,7 @@ elif page == "📊 About & Methods":
     - Clinical validation recommended before real deployment
 
     ---
-    **Built by:** Sai Pramod Podila | Cornerstone College | DS 302 | 2026
+    **Built by:** Sai Pramod Podila | Cornerstone College | 2026
     **GitHub:** github.com/pramodkumarpodila-source/bc_health_helper
     """)
     show_disclaimer()
