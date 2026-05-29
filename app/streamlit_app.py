@@ -143,7 +143,7 @@ def get_final_pathway(disease, severity, selected_symptoms, red_flags):
         'gp':       {'label':'👨‍⚕️ Book GP Appointment','color':'#146EB4','bg':'#EBF5FB',
                      'action':'Book an appointment with your family doctor for assessment.'},
         'pharmacy': {'label':'💊 Pharmacy / Self-Care First','color':'#27AE60','bg':'#EAFAF1',
-                     'action':'Try over-the-counter treatment (Tylenol, rest, fluids). See GP if no improvement in 1 week.'},
+                     'action':'Try over-the-counter treatment as appropriate. Ask your pharmacist what is suitable for your symptoms. See GP if no improvement in 1 week. ⚠️ ⚠️ If you are on prescription medications, talk to a pharmacist to confirm whether the OTC medications may interact with your prescriptions.'},
     }
     d = details.get(base, details['gp'])
     d['source'] = 'BC Government Guidelines + BC HealthLink 811'
@@ -490,7 +490,7 @@ if page == "🏠 Home":
     c1,c2,c3,c4 = st.columns(4)
     c1.metric("BC patients waiting","1.2 Million","for a specialist")
     c2.metric("Average wait time","32.2 weeks","GP to treatment")
-    c3.metric("Without family doctor","900,000","BC residents")
+    c3.metric("Without family doctor","1 in 4","BC residents — BC Family Doctors, June 2025")
     c4.metric("Wait times vs 1993","+208%","longer today")
     st.caption("📌 Statistics source: Doctors of BC (2025) and Fraser Institute (2025). Updated annually — not live data. Surgical wait times data updated quarterly by BC Government.")
     st.markdown("---")
@@ -602,6 +602,10 @@ elif page == "🩺 Symptom Helper":
                 st.markdown(f"**What to do:** {result['action']}")
                 st.markdown(f"*Source: {result['source']}*")
                 st.markdown(f"*Model confidence: {confidence}%*")
+                if confidence < 80:
+                    st.warning(f"⚠️ Model confidence is {confidence}% — this recommendation may not be accurate. If you have more symptoms, please select them for a better result. If these are your only symptoms, call 811 (HealthLink BC) free 24/7 to speak with a registered nurse.")
+                elif confidence >= 80:
+                    st.info(f"ℹ️ Model confidence is {confidence}%. Please note this tool is for navigation only — if your symptoms worsen at any time, call 811 or go to your nearest emergency room.")
 
                 if severity <= 3 and 'pharmacy' in result['label'].lower():
                     st.info("💡 **BC Tip:** Call **811 (HealthLink BC)** free 24/7 to speak with a registered nurse before going anywhere.")
@@ -796,7 +800,7 @@ elif page == "🔬 Lab Form Reader":
     """, unsafe_allow_html=True)
     st.markdown("""
     <div class="disclaimer">
-    ⚠️ <strong>Important:</strong> Reference ranges are from the Medical Council of Canada (mcc.ca). Your lab report includes its own reference ranges — always use those first. These results are for information only. Always discuss your results with your GP. Call 811 (HealthLink BC) free 24/7 if you have concerns.
+    ⚠️ <strong>Important:</strong> Reference ranges are from the LifeLabs BC Burnaby Reference Laboratory (March 2024). Your lab report includes its own reference ranges — always use those first. These results are for information only. Always discuss your results with your GP. Call 811 (HealthLink BC) free 24/7 if you have concerns.
     </div>
     """, unsafe_allow_html=True)
     st.markdown("---")
@@ -923,7 +927,7 @@ elif page == "🔬 Lab Form Reader":
                     - ✅ Normal results — mention to your GP at next visit
                     - ⬆️⬇️ Flagged results — book a GP appointment to discuss
                     - 🆘 Urgent concerns — call **811 (HealthLink BC)** free 24/7
-                    - 📋 **Reference ranges source:** Medical Council of Canada (mcc.ca)
+                    - 📋 **Reference ranges source:** LifeLabs BC Burnaby Reference Laboratory (March 2024) and Medical Council of Canada (MCC) 2024
                     """)
 
                     summary_lines = ["BC Health Helper — Lab Results Summary\n"]
@@ -932,7 +936,7 @@ elif page == "🔬 Lab Form Reader":
                         if interp['status'] != 'NORMAL':
                             summary_lines.append(f"  → {interp['meaning']}")
                     summary_lines.append("\n⚠️ Information only. Always discuss with your GP.")
-                    summary_lines.append("Source: Medical Council of Canada (mcc.ca)")
+                    summary_lines.append("Source: LifeLabs BC Burnaby Reference Laboratory (March 2024) and Medical Council of Canada (MCC) 2024")
 
                     st.download_button("📄 Download Results Summary",
                                       data='\n'.join(summary_lines),
@@ -986,7 +990,7 @@ elif page == "📊 About & Methods":
     | BC HealthLink 811 — healthlinkbc.ca (Jan 2025) | Emergency red flag symptoms |
     | BC Government Pharmacy Services — gov.bc.ca (Feb 2026) | 21 official minor ailments |
     | Canadian Triage Acuity Scale (CTAS) | Severity 1-10 routing |
-    | Medical Council of Canada — mcc.ca (2024) | Lab reference ranges |
+    | LifeLabs BC Burnaby Reference Laboratory (March 2024) + Medical Council of Canada (MCC) 2024 | Lab reference ranges |
 
     ### Privacy & PIPEDA
     - All processing runs locally on your device
