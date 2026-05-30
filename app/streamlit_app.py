@@ -53,12 +53,21 @@ def load_pathway_model():
 def load_forecast():
     return pd.read_csv('../data/processed/bc_wait_forecast.csv', parse_dates=['ds'])
 
-@st.cache_resource
+@st.cache_data(ttl=604800)  # Refresh every 7 days
 def load_wait_data():
-    df = pd.read_excel('../data/raw/2009_2025-quarterly-surgical_wait_times-final.xlsx')
-    df['WAITING'] = pd.to_numeric(df['WAITING'], errors='coerce')
-    df['COMPLETED'] = pd.to_numeric(df['COMPLETED'], errors='coerce')
-    return df
+    try:
+        quarterly_url = "https://catalogue.data.gov.bc.ca/dataset/7c1bf2a8-96bb-4ad5-888d-a90672eb306e/resource/f294562c-a6fd-4d7f-8f99-c51c91891c67/download/2009_2025-quarterly-surgical_wait_times-final.xlsx"
+        interim_url = "https://catalogue.data.gov.bc.ca/dataset/7c1bf2a8-96bb-4ad5-888d-a90672eb306e/resource/0c430fa8-043c-48d8-8e61-ecdab63b9ef3/download/2025_2026-quarterly-surgical_wait_times-q2-interim.xlsx"
+        df_quarterly = pd.read_excel(quarterly_url)
+        df_interim = pd.read_excel(interim_url)
+        df = pd.concat([df_quarterly, df_interim], ignore_index=True)
+        df['WAITING'] = pd.to_numeric(df['WAITING'], errors='coerce')
+        df['COMPLETED'] = pd.to_numeric(df['COMPLETED'], errors='coerce')
+        st.success("✅ Live BC Government data loaded")
+        return df
+    except Exception as e:
+        st.warning(f"⚠️ Could not load live BC data: {e}")
+        return pd.DataFrame()
 
 @st.cache_resource
 def load_ocr():
