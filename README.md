@@ -1,11 +1,17 @@
 # 🏥 BC Health Helper
-
+🌐 **Live App:** [bc-health-navigator.streamlit.app](https://bc-health-navigator.streamlit.app)
 An AI-powered healthcare navigation tool for BC patients — built at Cornerstone College (2026).
 
 > ⚠️ Information only. Not medical advice. Call 911 in emergencies.
 
-> 💻 Runs locally due to large dataset files (190MB). See setup instructions below.
+## 🔒 Privacy
 
+| Version | Privacy | Use Case |
+|---|---|---|
+| 🌐 Cloud | Remove name, DOB and health number before uploading lab forms | Demo, portfolio, general use |
+| 💻 Local | Full PIPEDA compliance — data never leaves your device | Real patient data |
+
+> For cloud version: black out your name, DOB and BC Health number before uploading. The app only needs test names and values.
 ---
 
 ## 🎯 What It Does
@@ -84,7 +90,7 @@ The raw datasets are not included in this repo (too large for GitHub). Download 
 | Dataset | Download Link | Save As |
 |---|---|---|
 | Disease-Symptom | [Kaggle — dhivyeshrk](https://www.kaggle.com/datasets/dhivyeshrk/diseases-and-symptoms-dataset) | `data/raw/Final_Augmented_dataset_Diseases_and_Symptoms.csv` |
-| BC Surgical Wait Times | [catalogue.data.gov.bc.ca](https://catalogue.data.gov.bc.ca/dataset/bc-surgical-wait-times) | `data/raw/` |
+| BC Surgical Wait Times | Loaded automatically from BC Government live API | Not required for app |
 | MTSamples | [Kaggle — tboyle10](https://www.kaggle.com/datasets/tboyle10/medicaltranscriptions) | `data/raw/mtsamples.csv` |
 
 ---
@@ -117,10 +123,14 @@ streamlit run streamlit_app.py
 
 ## 🔒 Privacy & PIPEDA Compliance
 
-- All processing runs locally on the user's device
-- No patient data is stored or transmitted to any server
-- Lab form images processed in memory only and immediately discarded
-- Compliant with Canadian PIPEDA privacy requirements
+| Version | Privacy | Use Case |
+|---|---|---|
+| 🌐 Cloud | Remove name, DOB and health number before uploading lab forms | Demo, portfolio, general use |
+| 💻 Local | Full PIPEDA compliance — data never leaves your device | Real patient data |
+
+- BC wait times load live from BC Government — no local files needed
+- No patient data stored or transmitted in either version
+- Production deployment would use Canadian cloud infrastructure for full PIPEDA compliance
 
 ---
 

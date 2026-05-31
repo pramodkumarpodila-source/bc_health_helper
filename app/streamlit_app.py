@@ -152,7 +152,7 @@ def get_final_pathway(disease, severity, selected_symptoms, red_flags):
         'gp':       {'label':'👨‍⚕️ Book GP Appointment','color':'#146EB4','bg':'#EBF5FB',
                      'action':'Book an appointment with your family doctor for assessment.'},
         'pharmacy': {'label':'💊 Pharmacy / Self-Care First','color':'#27AE60','bg':'#EAFAF1',
-                     'action':'Try over-the-counter treatment as appropriate. Ask your pharmacist what is suitable for your symptoms. See GP if no improvement in 1 week. ⚠️ ⚠️ If you are on prescription medications, talk to a pharmacist to confirm whether the OTC medications may interact with your prescriptions.'},
+                     'action':'Try over-the-counter treatment as appropriate. Ask your pharmacist what is suitable for your symptoms. See GP if no improvement in 1 week. ⚠️  If you are on prescription medications, talk to a pharmacist to confirm whether the OTC medications may interact with your prescriptions.'},
     }
     d = details.get(base, details['gp'])
     d['source'] = 'BC Government Guidelines + BC HealthLink 811'
