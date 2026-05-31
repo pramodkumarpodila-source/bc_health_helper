@@ -804,7 +804,7 @@ elif page == "🔬 Lab Form Reader":
     show_disclaimer()
     st.markdown("""
     <div class="disclaimer">
-    🔒 <strong>Privacy:</strong> Your files are processed locally on your device only. Nothing is sent to any server. PIPEDA compliant.
+    🔒 <strong>Privacy:</strong> Remove your name, DOB and health number before uploading. The app only needs test names and values. For full PIPEDA compliance run locally from GitHub.
     </div>
     """, unsafe_allow_html=True)
     st.markdown("""
@@ -1002,10 +1002,11 @@ elif page == "📊 About & Methods":
     | LifeLabs BC Burnaby Reference Laboratory (March 2024) + Medical Council of Canada (MCC) 2024 | Lab reference ranges |
 
     ### Privacy & PIPEDA
-    - All processing runs locally on your device
-    - No patient data stored or transmitted
-    - Lab images processed in memory only
-    - Compliant with Canadian PIPEDA privacy requirements
+- 🌐 Cloud version: Remove personal identifiers before uploading lab forms
+    - 💻 Local version: Full PIPEDA compliance — data never leaves your device
+    - No patient data stored or transmitted in either version
+    - Production deployment would use Canadian cloud infrastructure for full PIPEDA compliance
+    - Clone from GitHub to run locally: github.com/pramodkumarpodila-source/bc_health_helper
 
     ### Limitations
     - Not a diagnostic tool — navigation only

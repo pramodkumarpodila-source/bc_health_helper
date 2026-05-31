@@ -8,3 +8,5 @@ pdf2image
 scikit-learn
 prophet
 openpyxl
+spacy
+xgboost
