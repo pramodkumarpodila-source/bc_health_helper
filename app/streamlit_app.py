@@ -529,7 +529,7 @@ elif page == "🩺 Symptom Helper":
     st.error("🚨 **Call 911 immediately if you have any of these:** Chest pain · Trouble breathing or choking · Loss of consciousness · Signs of stroke (face drooping, arm weakness, speech difficulty) · Major bleeding · Seizure · Severe allergic reaction · Serious head injury · Severe burns · Vomiting blood · Sudden severe headache. **Do not use this app — call 911 now.**")
 
     st.markdown("---")
-    st.markdown("### 📊 Step 2 — How severe are your symptoms? (1-10)")
+    st.markdown("### 📊 Step 1 — How severe are your symptoms? (1-10)")
     st.write("1 = Mild | 5 = Affecting daily life | 10 = Unbearable")
     severity = st.slider("Severity:", 1, 10, 3,
                          help="Based on Canadian Triage Acuity Scale (CTAS)")
@@ -541,20 +541,19 @@ elif page == "🩺 Symptom Helper":
         st.warning("⚠️ Severity 7-8 — Consider going to an Urgent & Primary Care Centre (UPCC) or walk-in clinic today.")
 
     st.markdown("---")
-    st.markdown("### 🩺 Step 3 — Select your symptoms")
+    st.markdown("### 🩺 Step 2 — Select your symptoms")
 
     try:
         model, le, symptom_list = load_symptom_model()
         pathway_model, le_pathway, pw_symptoms, red_flags, disease_map = load_pathway_model()
 
         common_symptoms = [
-            'headache','fever','cough','nausea','vomiting',
-            'back pain','sharp chest pain','shortness of breath','dizziness',
-            'insomnia','sharp abdominal pain','burning abdominal pain',
-            'sore throat','nasal congestion','skin swelling',
-            'joint pain','leg pain','arm pain','knee pain',
-            'frequent urination','blood in urine','depression',
-            'anxiety and nervousness','chills','fatigue'
+            'headache','fever','nausea','vomiting',
+            'cough','sharp abdominal pain','burning abdominal pain','back pain',
+            'dizziness','chills','fatigue','sore throat',
+            'nasal congestion','joint pain','leg pain','arm pain',
+            'knee pain','skin swelling','insomnia','frequent urination',
+            'blood in urine','depression','anxiety and nervousness'
         ]
 
         available = [s for s in common_symptoms if s in symptom_list]
