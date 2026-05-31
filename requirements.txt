@@ -10,3 +10,4 @@ prophet
 openpyxl
 spacy
 xgboost
+shap

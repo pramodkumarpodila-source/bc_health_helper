@@ -49,6 +49,14 @@ def load_symptom_model():
     return data['model'], data['encoder'], data['symptoms']
 
 @st.cache_resource
+def load_shap_explainer():
+    try:
+        with open(os.path.join(SRC_DIR, 'shap_explainer.pkl'), 'rb') as f:
+            return pickle.load(f)
+    except:
+        return None
+
+@st.cache_resource
 def load_pathway_model():
     with open(os.path.join(SRC_DIR, 'pathway_model.pkl'), 'rb') as f:
         data = pickle.load(f)
@@ -518,30 +526,7 @@ elif page == "🩺 Symptom Helper":
     show_disclaimer()
     st.markdown("---")
 
-    st.markdown("### 🚨 Step 1 — Do you have any of these RIGHT NOW?")
-    st.error("These are BC HealthLink 811 emergency symptoms. If yes — call 911 immediately.")
-
-    red_flags_display = {
-        'Chest pain or pressure':'sharp chest pain',
-        'Trouble breathing':'shortness of breath',
-        'Weakness/numbness on one side of body':'weakness',
-        'Loss of consciousness':'loss of consciousness',
-        'Heavy or uncontrolled bleeding':'heavy bleeding',
-        'Vomiting blood':'vomiting blood',
-        'Sudden severe headache':'sudden severe headache',
-        'Seizure':'seizure'
-    }
-
-    has_red_flag = False
-    rc1,rc2 = st.columns(2)
-    for i,(display,_) in enumerate(red_flags_display.items()):
-        col = rc1 if i < 4 else rc2
-        if col.checkbox(f"🔴 {display}", key=f"rf_{i}"):
-            has_red_flag = True
-
-    if has_red_flag:
-        st.error("🚨 **Call 911 immediately.** Do not wait. This is a medical emergency.")
-        st.stop()
+    st.error("🚨 **Call 911 immediately if you have any of these:** Chest pain · Trouble breathing or choking · Loss of consciousness · Signs of stroke (face drooping, arm weakness, speech difficulty) · Major bleeding · Seizure · Severe allergic reaction · Serious head injury · Severe burns · Vomiting blood · Sudden severe headache. **Do not use this app — call 911 now.**")
 
     st.markdown("---")
     st.markdown("### 📊 Step 2 — How severe are your symptoms? (1-10)")
@@ -582,11 +567,6 @@ elif page == "🩺 Symptom Helper":
                     if st.checkbox(s.title(), key=s):
                         selected_symptoms.append(s)
 
-        other = st.text_input("Any other symptom?")
-        if other and other.lower() in symptom_list:
-            selected_symptoms.append(other.lower())
-            st.success(f"✅ Added: {other}")
-
         if 0 < len(selected_symptoms) < 3:
             st.info(f"💡 {len(selected_symptoms)} symptom(s) selected. More symptoms = more accurate suggestion.")
 
@@ -616,6 +596,48 @@ elif page == "🩺 Symptom Helper":
                 st.markdown(f"**What to do:** {result['action']}")
                 st.markdown(f"*Source: {result['source']}*")
                 st.markdown(f"*Model confidence: {confidence}%*")
+                # SHAP Explainability
+                try:
+                    explainer = load_shap_explainer()
+                    if explainer:
+                        shap_input = pd.DataFrame([{s: 1 if s in selected_symptoms else 0 for s in symptom_list}])
+                        shap_values = explainer.shap_values(shap_input)
+                        shap_array = np.array(shap_values)
+                        class_shap = shap_array[0, :, int(disease_pred)]
+                        top_idx = np.argsort(np.abs(class_shap))[-10:][::-1]
+                        st.markdown("#### 🔍 Why this recommendation?")
+                        shap_scores = []
+                        for i in top_idx:
+                            sym = symptom_list[int(i)]
+                            val = class_shap[int(i)]
+                            if sym in selected_symptoms:
+                                shap_scores.append((sym.title(), abs(float(val))))
+
+                        # If still empty check all symptoms
+                        if not shap_scores:
+                            for sym in selected_symptoms:
+                                if sym in symptom_list:
+                                    idx = symptom_list.index(sym)
+                                    shap_scores.append((sym.title(), abs(float(class_shap[idx]))))
+
+                        shap_scores = sorted(shap_scores, key=lambda x: x[1], reverse=True)[:5]
+
+                        if shap_scores:
+                            shap_df = pd.DataFrame(shap_scores, columns=['Symptom', 'Influence'])
+                            fig_shap = px.bar(shap_df, x='Influence', y='Symptom', 
+                                            orientation='h',
+                                            title='Symptom Influence on Recommendation',
+                                            color_discrete_sequence=['#146EB4'])
+                            fig_shap.update_layout(
+                                height=max(250, len(shap_scores)*80),
+                                showlegend=False,
+                                margin=dict(l=100, r=20, t=40, b=40)
+                            )
+                            st.plotly_chart(fig_shap, use_container_width=True)
+                        else:
+                            st.markdown("💡 The combination of your symptoms together drove this recommendation.")
+                except:
+                    pass
                 if confidence < 80:
                     st.warning(f"⚠️ Model confidence is {confidence}% — this recommendation may not be accurate. If you have more symptoms, please select them for a better result. If these are your only symptoms, call 811 (HealthLink BC) free 24/7 to speak with a registered nurse.")
                 elif confidence >= 80:
