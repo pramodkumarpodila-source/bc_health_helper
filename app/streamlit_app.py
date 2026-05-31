@@ -1020,7 +1020,7 @@ elif page == "📊 About & Methods":
     | LifeLabs BC Burnaby Reference Laboratory (March 2024) + Medical Council of Canada (MCC) 2024 | Lab reference ranges |
 
     ### Privacy & PIPEDA
-- 🌐 Cloud version: Remove personal identifiers before uploading lab forms
+    - 🌐 Cloud version: Remove personal identifiers before uploading lab forms
     - 💻 Local version: Full PIPEDA compliance — data never leaves your device
     - No patient data stored or transmitted in either version
     - Production deployment would use Canadian cloud infrastructure for full PIPEDA compliance
