@@ -8,7 +8,12 @@ import easyocr
 from PIL import Image
 from pdf2image import convert_from_bytes
 import re
+import os
 import warnings
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_DIR = os.path.join(BASE_DIR, '..', 'src')
+DATA_DIR = os.path.join(BASE_DIR, '..', 'data', 'processed')
 warnings.filterwarnings('ignore')
 
 st.set_page_config(
@@ -39,19 +44,19 @@ def show_disclaimer():
 # ── Load Models ───────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_symptom_model():
-    with open('../src/symptom_model.pkl', 'rb') as f:
+    with open(os.path.join(SRC_DIR, 'symptom_model.pkl'), 'rb') as f:
         data = pickle.load(f)
     return data['model'], data['encoder'], data['symptoms']
 
 @st.cache_resource
 def load_pathway_model():
-    with open('../src/pathway_model.pkl', 'rb') as f:
+    with open(os.path.join(SRC_DIR, 'pathway_model.pkl'), 'rb') as f:
         data = pickle.load(f)
     return data['model'], data['encoder'], data['symptoms'], data['red_flags'], data['disease_map']
 
 @st.cache_resource
 def load_forecast():
-    return pd.read_csv('../data/processed/bc_wait_forecast.csv', parse_dates=['ds'])
+    return pd.read_csv(os.path.join(DATA_DIR, 'bc_wait_forecast.csv'), parse_dates=['ds'])
 
 @st.cache_data(ttl=604800)  # Refresh every 7 days
 def load_wait_data():
@@ -824,7 +829,10 @@ elif page == "🔬 Lab Form Reader":
 
     st.markdown("### 📸 Option 1 — Take a Photo")
     st.info("💡 Cover your name, DOB and health number with your finger before capturing.")
-    camera_image = st.camera_input("Take a photo of your lab form")
+    use_camera = st.checkbox("📷 Open Camera")
+    camera_image = None
+    if use_camera:
+        camera_image = st.camera_input("Take a photo of your lab form")
 
     st.markdown("### 📁 Option 2 — Upload a File")
     uploaded_files = st.file_uploader(
