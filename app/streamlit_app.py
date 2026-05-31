@@ -822,14 +822,23 @@ elif page == "🔬 Lab Form Reader":
     sex = st.selectbox("Your biological sex (for accurate reference ranges):",
                        ["Unknown", "Male", "Female"]).lower()
 
+    st.markdown("### 📸 Option 1 — Take a Photo")
+    st.info("💡 Cover your name, DOB and health number with your finger before capturing.")
+    camera_image = st.camera_input("Take a photo of your lab form")
+
+    st.markdown("### 📁 Option 2 — Upload a File")
     uploaded_files = st.file_uploader(
         "Upload your lab form(s) — JPG, PNG, or PDF:",
         type=['jpg','jpeg','png','pdf'],
         accept_multiple_files=True
     )
 
+    all_images = []
+
+    if camera_image:
+        all_images.append(Image.open(camera_image))
+
     if uploaded_files:
-        all_images = []
         for uploaded in uploaded_files:
             if uploaded.type == 'application/pdf':
                 try:
@@ -841,6 +850,7 @@ elif page == "🔬 Lab Form Reader":
             else:
                 all_images.append(Image.open(uploaded))
 
+    if all_images:
         st.write(f"**{len(all_images)} page(s) loaded**")
 
         if st.button("🔍 Read & Explain", type="primary"):
